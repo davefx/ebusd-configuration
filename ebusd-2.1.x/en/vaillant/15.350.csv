@@ -76,7 +76,7 @@ r,,ClockSwitchSummerWinterDone,ClockSwitchSummerWinterDone,,,,"7800",,,yesno,,,a
 r,,MonitorEEpromInkonsiNumber,MonitorEEpromInkonsiNumber,,,,"9F00",,,HEX:8,,,identification of the last eight EEPROM inconsistencies
 r,,MonitorCurrentIPart,MonitorCurrent_I_Anteil,,,,"3300",,,temp,,,current i-control value; updated every 3 minutes
 r,,CountryVariant,CountryVariant,,,,"1700",,,UCH,,,"country variant (0 = west, 1 = east, 2 = all)"
-r,,DisplayedRoomTemp,DisplayedRoomTemp,,,,"8000",,,temp,,,displayed room temperature
+r1,,DisplayedRoomTemp,DisplayedRoomTemp,,,,"8000",,,temp,,,displayed room temperature
 r,,RaumtempIstOben,RaumtempIstOben,,,,"C000",,,tempsensor,,,
 r,,ADCValueTempabove,ADCValue_T_above,,,,"2D00",,,UIN,,,
 r,,RaumtempIstUnten,RaumtempIstUnten,,,,"C100",,,tempsensor,,,
