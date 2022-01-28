@@ -32,7 +32,7 @@ r1,,HwcWaterflow,d.36 DHW waterflow,,,,"5500",,,uin100,,,domestic hot water flow
 r1,,FlowTemp,d.40 TFT_DK,,,,"1800",,,tempsensor,,,flow temperature
 r1,,ReturnTemp,d.41 Temp heating return,,,,"9800",,,tempmirrorsensor,,,return temperature
 r1,,IonisationVoltageLevel,d.44 Dig. ionisation voltage,,,,"A400",,,SIN,10,,digital ionisation voltage> 80 no flame< 40 good flame
-r1,,OutdoorstempSensor,d.47 Temp outside,,,,"7600",,,tempsensor,,,Outside temperature (uncorrected value)
+r1;wi,,OutdoorstempSensor,d.47 Temp outside,,,,"7600",,,tempsensor,,,Outside temperature (uncorrected value)
 r1,,RemainingBoilerblocktime,d.67 Remaining burner block time,,,,"3800",,,minutes0,,,Remaining burner anti cycling time
 r1,,EBusHeatcontrol,d.90 Digital control recognized,,,,"0004",,,yesno,,,Digital regulator status
 r1,,dcfState,d.91 Status DCF 77,,,,"6900",,,dcfstate,,,DCF status
