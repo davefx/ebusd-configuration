@@ -1,16 +1,25 @@
 #!/bin/bash
 # Script to compare this fork with upstream and generate a detailed change list
-# Usage: ./compare_with_upstream.sh
+# Usage: ./compare_with_upstream.sh [UPSTREAM_COMMIT_OR_TAG]
+#
+# Examples:
+#   ./compare_with_upstream.sh                    # Compare with current upstream master
+#   ./compare_with_upstream.sh v21.3              # Compare with specific tag
+#   ./compare_with_upstream.sh abc123             # Compare with specific commit
+#   ./compare_with_upstream.sh "HEAD@{2023-01-01}" # Compare with upstream at specific date
 
 set -e
 
 FORK_DIR="$(pwd)"
 UPSTREAM_DIR="/tmp/upstream-ebusd-config"
+UPSTREAM_REF="${1:-master}"  # Default to master if no argument provided
 OUTPUT_FILE="YOUR_CHANGES.md"
 
 echo "============================================"
 echo "Fork vs Upstream Comparison Script"
 echo "============================================"
+echo ""
+echo "Comparing against upstream ref: $UPSTREAM_REF"
 echo ""
 
 # Clone upstream if not exists
@@ -20,12 +29,31 @@ if [ ! -d "$UPSTREAM_DIR" ]; then
   echo "✓ Upstream cloned"
 else
   echo "Upstream repository already exists at $UPSTREAM_DIR"
-  echo "Updating..."
+  echo "Fetching latest changes..."
   cd "$UPSTREAM_DIR"
-  git pull
+  git fetch --all --tags
   cd "$FORK_DIR"
   echo "✓ Upstream updated"
 fi
+
+# Checkout the specified upstream reference
+echo "Checking out upstream ref: $UPSTREAM_REF"
+cd "$UPSTREAM_DIR"
+git checkout "$UPSTREAM_REF" || {
+  echo "ERROR: Could not checkout '$UPSTREAM_REF'"
+  echo "Available tags:"
+  git tag | tail -10
+  echo ""
+  echo "Recent commits:"
+  git log --oneline -10
+  exit 1
+}
+UPSTREAM_COMMIT=$(git rev-parse HEAD)
+UPSTREAM_DATE=$(git log -1 --format="%ai")
+cd "$FORK_DIR"
+echo "✓ Using upstream commit: $UPSTREAM_COMMIT"
+echo "  Date: $UPSTREAM_DATE"
+echo ""
 
 echo ""
 echo "Analyzing differences..."
@@ -39,6 +67,9 @@ This document lists all changes in your fork (`davefx/ebusd-configuration`) comp
 
 **Generated**: $(date)
 **Upstream**: https://github.com/john30/ebusd-configuration
+**Upstream Commit**: $UPSTREAM_COMMIT
+**Upstream Date**: $UPSTREAM_DATE
+**Upstream Ref Used**: $UPSTREAM_REF
 **Your Fork**: https://github.com/davefx/ebusd-configuration
 
 ---

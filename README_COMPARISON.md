@@ -4,51 +4,88 @@
 
 You wanted an exhaustive list of changes YOU made in your fork, excluding any merges from the upstream `john30/ebusd-configuration` repository.
 
+**Important**: You want to compare against the upstream state **just before your last merge**, not the current upstream (which has changed significantly).
+
 ## The Problem
 
 This repository is a shallow clone (limited git history), which makes it impossible to use standard git commands like `git log upstream/master..HEAD` to identify your specific changes.
 
 ## The Solution
 
-I've created tools to help you compare your fork file-by-file against the upstream repository.
+I've created tools to help you compare your fork file-by-file against a **specific version** of the upstream repository (e.g., the state just before your last merge).
 
 ## How to Use
 
-### Step 1: Run the Comparison Script
+### Step 1: Find the Right Upstream Commit/Tag
+
+If you know the **date** of your last merge from upstream:
 
 ```bash
-cd /home/runner/work/ebusd-configuration/ebusd-configuration
+./find_upstream_at_date.sh "2023-06-15"
+```
+
+This will tell you the upstream commit or tag to use for comparison.
+
+**OR** if you know a specific **tag** (e.g., v21.3, v22.1):
+
+```bash
+# List available upstream tags
+git ls-remote --tags https://github.com/john30/ebusd-configuration.git | tail -20
+```
+
+### Step 2: Run the Comparison Script
+
+Once you know which upstream version to compare against, run:
+
+```bash
+# Compare against a specific tag
+./compare_with_upstream.sh v21.3
+
+# OR compare against a specific commit
+./compare_with_upstream.sh abc123def
+
+# OR compare against current upstream master (if unsure)
 ./compare_with_upstream.sh
 ```
 
-This script will:
-1. Clone the upstream repository (john30/ebusd-configuration) to `/tmp/upstream-ebusd-config`
-2. Compare every file in your fork against upstream
-3. Generate `YOUR_CHANGES.md` with three sections:
-   - **New Files**: Files you added that don't exist upstream
-   - **Modified Files**: Files that exist in both but have different content (with diffs shown)
-   - **Deleted Files**: Files that exist upstream but you removed
-
-### Step 2: Review the Output
+### Step 3: Review the Output
 
 Open `YOUR_CHANGES.md` to see:
 - Complete list of your additions
-- Detailed diffs of your modifications
+- Detailed diffs of your modifications  
 - Summary statistics
 
-### Alternative: Use GitHub's Compare Feature
+## Examples
 
-You can also compare branches directly on GitHub:
+### Example 1: You last merged upstream on June 15, 2023
 
-**URL**: `https://github.com/davefx/ebusd-configuration/compare/master...john30:ebusd-configuration:master`
+```bash
+# Find the upstream commit at that date
+./find_upstream_at_date.sh "2023-06-15"
 
-This will show all differences visually in your browser.
+# Output will tell you to run:
+./compare_with_upstream.sh abc123  # (or a tag like v21.3)
+```
+
+### Example 2: You know you merged from tag v21.3
+
+```bash
+./compare_with_upstream.sh v21.3
+```
+
+### Example 3: You're not sure, compare with current upstream
+
+```bash
+./compare_with_upstream.sh
+# This compares with latest upstream, so shows ALL differences including their new changes
+```
 
 ## Files I Created
 
 1. **FORK_CHANGES.md** - Detailed documentation about the comparison process
-2. **compare_with_upstream.sh** - Automated comparison script
-3. **README_COMPARISON.md** - This quick start guide
+2. **compare_with_upstream.sh** - Automated comparison script with version support
+3. **find_upstream_at_date.sh** - Helper to find upstream commit at a specific date
+4. **README_COMPARISON.md** - This quick start guide
 
 ## What Gets Generated
 
@@ -56,6 +93,7 @@ When you run the script, you'll get:
 
 ```
 YOUR_CHANGES.md
+├── Metadata (upstream commit, date, ref used)
 ├── Summary (counts of added/modified/deleted)
 ├── New Files Added to Fork
 │   ├── file1.csv
@@ -69,45 +107,38 @@ YOUR_CHANGES.md
     └── (if any)
 ```
 
-## Example Output
+## Understanding the Output
 
-```markdown
-## Summary
+The generated `YOUR_CHANGES.md` will show:
 
-- **New files added**: 150
-- **Files modified**: 25
-- **Files deleted**: 5
-- **Total changes**: 180
+- **Upstream Ref Used**: The exact tag/commit you compared against
+- **Upstream Date**: When that upstream version was created
+- **Your changes**: Only differences between your fork and THAT specific upstream version
 
-## New Files Added to Fork
+This means you won't see changes that upstream made AFTER your last merge.
 
-- ebusd-2.1.x/de/vaillant/custom-device.csv
-- ebusd-2.1.x/en/vaillant/custom-device.csv
+## Alternative: Use GitHub's Compare Feature
 
-## Modified Files
+You can also compare branches directly on GitHub:
 
-- ebusd-2.1.x/de/vaillant/08.bai.csv
-
-### Detailed Differences
-
-#### `ebusd-2.1.x/de/vaillant/08.bai.csv`
-
-```diff
---- upstream/ebusd-2.1.x/de/vaillant/08.bai.csv
-+++ fork/ebusd-2.1.x/de/vaillant/08.bai.csv
-@@ -10,3 +10,4 @@
- line 10
-+new line added by you
+**Current upstream**:
 ```
+https://github.com/davefx/ebusd-configuration/compare/master...john30:ebusd-configuration:master
 ```
 
-## Need Help?
+**Specific upstream version** (replace v21.3 with your tag):
+```
+https://github.com/davefx/ebusd-configuration/compare/master...john30:ebusd-configuration:v21.3
+```
 
-If the script doesn't work or you have questions:
-1. Check that you have internet access (to clone upstream)
-2. Ensure you have enough disk space in `/tmp`
-3. Check the FORK_CHANGES.md file for manual comparison steps
+## Need Help Finding Your Last Merge Date?
+
+Check your fork's commit history or GitHub pull requests:
+1. Go to your fork on GitHub
+2. Look for merge commits or pull requests from upstream
+3. Note the date of the last merge
+4. Use that date with `find_upstream_at_date.sh`
 
 ## Why This Approach?
 
-Since your repository is a shallow clone (commit 601bca4 "Uploading fixes" is grafted), we don't have the full git history showing which commits came from upstream vs your own work. File-by-file comparison is the only reliable way to identify your specific changes.
+Since your repository is a shallow clone (commit 601bca4 "Uploading fixes" is grafted), we don't have the full git history showing which commits came from upstream vs your own work. File-by-file comparison against a specific upstream version is the only reliable way to identify your specific changes while excluding upstream's subsequent changes.
