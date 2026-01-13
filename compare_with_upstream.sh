@@ -60,10 +60,10 @@ echo "Analyzing differences..."
 echo ""
 
 # Initialize output file
-cat > "$OUTPUT_FILE" << 'EOF'
+cat > "$OUTPUT_FILE" << EOF
 # Your Fork Changes vs Upstream
 
-This document lists all changes in your fork (`davefx/ebusd-configuration`) compared to the upstream repository (`john30/ebusd-configuration`).
+This document lists all changes in your fork (\`davefx/ebusd-configuration\`) compared to the upstream repository (\`john30/ebusd-configuration\`).
 
 **Generated**: $(date)
 **Upstream**: https://github.com/john30/ebusd-configuration
@@ -99,7 +99,7 @@ while IFS= read -r -d '' file; do
     echo "$rel_file" >> "$TMP_ADDED"
     ((ADDED_COUNT++))
   fi
-done < <(find . -type f -not -path './.git/*' -not -path './YOUR_CHANGES.md' -not -path './FORK_CHANGES.md' -not -path './compare_with_upstream.sh' -print0)
+done < <(find . -type f -not -path './.git/*' -not -path './YOUR_CHANGES.md' -not -path './FORK_CHANGES.md' -not -path './README_COMPARISON.md' -not -path './STEP_BY_STEP.md' -not -path './USAGE.txt' -not -path './USAGE.md' -not -path './compare_with_upstream.sh' -not -path './find_upstream_at_date.sh' -print0)
 
 # Find modified files
 echo "Finding modified files..."
@@ -112,7 +112,7 @@ while IFS= read -r -d '' file; do
       ((MODIFIED_COUNT++))
     fi
   fi
-done < <(find . -type f -not -path './.git/*' -not -path './YOUR_CHANGES.md' -not -path './FORK_CHANGES.md' -not -path './compare_with_upstream.sh' -print0)
+done < <(find . -type f -not -path './.git/*' -not -path './YOUR_CHANGES.md' -not -path './FORK_CHANGES.md' -not -path './README_COMPARISON.md' -not -path './STEP_BY_STEP.md' -not -path './USAGE.txt' -not -path './USAGE.md' -not -path './compare_with_upstream.sh' -not -path './find_upstream_at_date.sh' -print0)
 
 # Find deleted files (in upstream but not in fork)
 echo "Finding deleted files..."
